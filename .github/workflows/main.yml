@@ -23,7 +23,7 @@ jobs:
         run: |
           echo "=== Installing Dependencies ==="
           python -m pip install --upgrade pip
-          pip install flask scikit-learn joblib numpy pandas instaloader
+          pip install -r requirements.txt
 
       - name: Run Model Training & View Logs
         run: |
