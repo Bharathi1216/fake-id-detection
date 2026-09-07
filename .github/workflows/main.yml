@@ -1,0 +1,39 @@
+name: Run Fake Account Detector
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-detection:
+    name: Run Python Script & Display Logs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          echo "=== Installing Dependencies ==="
+          python -m pip install --upgrade pip
+          pip install flask scikit-learn joblib numpy pandas instaloader
+
+      - name: Run Model Training & View Logs
+        run: |
+          echo "=== Running Fake Account Detector Script ==="
+          python -c "
+          import os
+          from fakeacc import train_fake_account_detector
+          
+          model_path = 'fake_account_detector.joblib'
+          print('[INFO] Executing training and testing on dataset...')
+          train_fake_account_detector('trainData.json', 'testData.json', model_path)
+          print('[SUCCESS] Execution completed successfully.')
+          "
