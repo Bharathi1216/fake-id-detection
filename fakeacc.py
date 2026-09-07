@@ -40,37 +40,37 @@ def fetch_profile_info(username):
 
 # Function to train the model
 def train_fake_account_detector(train_data_path, test_data_path, model_path):
-    if not os.path.exists(model_path):
-        with open(train_data_path, "r") as train_file:
-            train_data = json.load(train_file)
-        with open(test_data_path, "r") as test_file:
-            test_data = json.load(test_file)
-        
-        df_train = pd.DataFrame(train_data)
-        df_test = pd.DataFrame(test_data)
-        
-        features = [
-            "userFollowerCount",
-            "userFollowingCount",
-            "userBiographyLength",
-            "userMediaCount",
-            "userHasProfilPic",
-            "userIsPrivate",
-            "usernameDigitCount",
-            "usernameLength"
-        ]
-        target = "isFake"
-        
-        X_train = df_train[features]
-        y_train = df_train[target]
-        X_test = df_test[features]
-        y_test = df_test[target]
-        
-        pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", RandomForestClassifier(n_estimators=100, random_state=42))])
-        pipeline.fit(X_train, y_train)
-        joblib.dump(pipeline, model_path)
-        print("Model trained and saved at", model_path)
-        print("Test Accuracy:", pipeline.score(X_test, y_test))
+    with open(train_data_path, "r") as train_file:
+        train_data = json.load(train_file)
+    with open(test_data_path, "r") as test_file:
+        test_data = json.load(test_file)
+    
+    df_train = pd.DataFrame(train_data)
+    df_test = pd.DataFrame(test_data)
+    
+    # [TESTING_BUG_FOR_LOG_ANALYSIS]: Intentional key mismatch to generate error logs for analysis
+    features = [
+        "userFollowersCount_invalid_field",  # Original: "userFollowerCount"
+        "userFollowingCount",
+        "userBiographyLength",
+        "userMediaCount",
+        "userHasProfilPic",
+        "userIsPrivate",
+        "usernameDigitCount",
+        "usernameLength"
+    ]
+    target = "isFake"
+    
+    X_train = df_train[features]
+    y_train = df_train[target]
+    X_test = df_test[features]
+    y_test = df_test[target]
+    
+    pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", RandomForestClassifier(n_estimators=100, random_state=42))])
+    pipeline.fit(X_train, y_train)
+    joblib.dump(pipeline, model_path)
+    print("Model trained and saved at", model_path)
+    print("Test Accuracy:", pipeline.score(X_test, y_test))
 
 # Route for the home page
 @app.route('/', methods=['GET', 'POST'])
